@@ -7,27 +7,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        'tesla-black': '#000000',
-        'tesla-gray': '#393c41',
-        'tesla-light-gray': '#5c5e62',
+        // Tesla-inspired: Clean white/black with red accent
+        primary: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#E82127', // Tesla red
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+        },
+        accent: {
+          500: '#171a20', // Tesla dark gray
+          600: '#0a0b0e',
+        },
+        light: {
+          50: '#ffffff',
+          100: '#f7f7f7',
+          200: '#f4f4f4',
+          300: '#e5e5e5',
+        }
       },
       fontFamily: {
-        'tesla': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
-        'fade-in': 'fadeIn 1s ease-in',
-        'fade-in-up': 'fadeInUp 1s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        fadeInUp: {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-      },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        }
+      }
     },
   },
   plugins: [],
