@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
-import { useState } from "react";
 
 function Contact() {
   const [showContact, setShowContact] = useState(false);
@@ -9,11 +9,14 @@ function Contact() {
     email: "",
     message: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const GOOGLE_SHEETS_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL;
+  const FORM_URL =
+    import.meta.env.VITE_FORMSPREE_URL ||
+    import.meta.env.VITE_GOOGLE_SHEETS_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,12 +32,24 @@ function Contact() {
       return;
     }
 
+    console.log("Form URL:", FORM_URL);
+
+    if (!FORM_URL) {
+      setError("Form service URL not configured. Check .env file.");
+      return;
+    }
+
     setLoading(true);
+
     try {
-      const res = await fetch(GOOGLE_SHEETS_URL, {
+      const formPayload = new FormData();
+      formPayload.append("name", formData.name);
+      formPayload.append("email", formData.email);
+      formPayload.append("message", formData.message);
+
+      const res = await fetch(FORM_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formPayload,
       });
 
       const result = await res.json();
@@ -44,9 +59,10 @@ function Contact() {
         setFormData({ name: "", email: "", message: "" });
         setTimeout(() => setShowContact(false), 2000);
       } else {
-        setError("Failed to send message. Try again.");
+        setError(result.message || "Failed to send message. Try again.");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Something went wrong. Try again later.");
     } finally {
       setLoading(false);
@@ -75,7 +91,7 @@ function Contact() {
           I would love to hear from you! Feel free to reach out.
         </p>
 
-        {/* Icons */}
+        {/* Social / Contact Icons */}
         <div className="flex justify-center gap-6 mt-8">
           <button
             onClick={() => setShowContact(true)}
@@ -90,7 +106,6 @@ function Contact() {
             target="_blank"
             rel="noopener noreferrer"
             className="p-4 text-white rounded-2xl hover:bg-white hover:text-black transition-all duration-300"
-            style={{ fontFamily: "Calibri, sans-serif" }}
           >
             <FaGithub size={26} />
           </a>
@@ -100,7 +115,6 @@ function Contact() {
             target="_blank"
             rel="noopener noreferrer"
             className="p-4 text-white rounded-2xl hover:bg-white hover:text-black transition-all duration-300"
-            style={{ fontFamily: "Calibri, sans-serif" }}
           >
             <FaLinkedin size={26} />
           </a>
@@ -110,7 +124,6 @@ function Contact() {
             target="_blank"
             rel="noopener noreferrer"
             className="p-4 text-white rounded-2xl hover:bg-white hover:text-black transition-all duration-300"
-            style={{ fontFamily: "Calibri, sans-serif" }}
           >
             <FaXTwitter size={26} />
           </a>
@@ -120,7 +133,7 @@ function Contact() {
         {showContact && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
             <div className="bg-gray-900 p-8 rounded-2xl w-full max-w-md relative">
-              {/* Close */}
+              {/* Close Button */}
               <button
                 onClick={() => setShowContact(false)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -133,6 +146,15 @@ function Contact() {
               </h3>
 
               <form className="space-y-4" onSubmit={handleSubmit}>
+                {/* Honeypot (anti-spam) */}
+                <input
+                  type="text"
+                  name="company"
+                  tabIndex="-1"
+                  autoComplete="off"
+                  className="hidden"
+                />
+
                 <input
                   type="text"
                   name="name"
@@ -161,10 +183,11 @@ function Contact() {
                 />
 
                 {error && (
-                  <p className="text-red-500 font-medium text-sm">{error}</p>
+                  <p className="text-red-500 text-sm">{error}</p>
                 )}
+
                 {success && (
-                  <p className="text-green-500 font-medium text-sm">
+                  <p className="text-green-500 text-sm">
                     Message sent successfully!
                   </p>
                 )}
@@ -173,7 +196,9 @@ function Contact() {
                   type="submit"
                   disabled={loading}
                   className={`w-full py-3 text-black font-semibold rounded-xl transition ${
-                    loading ? "bg-gray-500" : "bg-white hover:bg-gray-200"
+                    loading
+                      ? "bg-gray-500"
+                      : "bg-white hover:bg-gray-200"
                   }`}
                 >
                   {loading ? "Sending..." : "Send Message"}
