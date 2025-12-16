@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import profileImg from '/profile.png'
 
 function Hero() {
   // Stagger container
@@ -40,7 +41,7 @@ function Hero() {
         {/* Profile Photo */}
         <motion.div variants={itemVariants} className="mb-12">
           <img
-            src={`${import.meta.env.BASE_URL}profile.png`}
+            src={profileImg}
             alt="Samuel Sambil"
             className="w-36 h-36 md:w-44 md:h-44 rounded-full object-cover border-2 border-white/80 opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-300 mx-auto"
           />
