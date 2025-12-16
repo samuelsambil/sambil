@@ -49,7 +49,7 @@ function Hero() {
         {/* Logo / Name */}
         <motion.div variants={itemVariants} className="mb-4">
           <h2 className="text-2xl md:text-3xl font-light tracking-widest text-gray-400 mb-2">
-            <span className="text-accent-500">Samuel</span>
+            <span className="gradient-blackish-white">Samuel</span>
             <span className="text-white"> Sambil</span>
           </h2>
           <div className="h-px w-32 bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto" />
